@@ -15,30 +15,31 @@ function registrarNota(req, res) {
         if (newNota.categoria != null) {
             newNota.save()
                 .then((noteSaved) => {
-                    res.status(200).send({ message: 'Nota registrada exitosamente: ' + noteSaved });
+                    return res.status(200).send({ message: 'Nota registrada exitosamente: ' + noteSaved });
                 }).catch(error => {
-                    res.status(404).send({ message: 'Error al registrar la nota' + error });
+                    return res.status(404).send({ message: 'Error al registrar la nota' + error });
                 })
         } else {
-            res.status(404).send({ message: 'Categoría no encontrada' })
+            return res.status(404).send({ message: 'Categoría no encontrada' })
         }
     } else {
-        res.status(200).send({ mesagge: 'Introduce todos los campos' });
+        return res.status(200).send({ mesagge: 'Introduce todos los campos' });
     }
 }
 
 function obtenerNotas(req, res) {
     var params = req.body
     var idUser = params.id_user;
-    notas.find({ id_user: idUser })
+    var idCategoria = params.categoria;
+    notas.find({ id_user: idUser, categoria: idCategoria })
         .then(response => {
             if (!response) {
                 return res.status(404).send({ message: 'Ha ocurrido un error' });
             }
-            res.send(response);
+            return res.send(response);
         })
         .catch(error => {
-            res.status(500).send({ message: 'Error al encontrar las notas' + error });
+            return res.status(500).send({ message: 'Error al encontrar las notas' + error });
         })
 
 }
@@ -53,10 +54,10 @@ function actualizarNota(req, res) {
                 return res.status(404).send({ message: 'Nota no encontrada' });
             }
 
-            res.send(note);
+            return res.send(note);
         })
         .catch((error) => {
-            res.status(500).send({ mesagge: 'Error al actualizar la nota' + error });
+            return res.status(500).send({ mesagge: 'Error al actualizar la nota' + error });
         });
 }
 
@@ -69,10 +70,10 @@ function eliminarNota(req, res) {
                 return res.status(404).send({ message: 'Nota no encontrada' });
             }
 
-            res.send({ message: 'Nota eliminada exitosamente' });
+            return res.send({ message: 'Nota eliminada exitosamente' });
         })
         .catch((error) => {
-            res.status(500).send({ message: 'Error al eliminar la nota' + error });
+            return res.status(500).send({ message: 'Error al eliminar la nota' + error });
         });
 }
 

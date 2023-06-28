@@ -1,4 +1,5 @@
 var categorias = require('../modelo/categorias');
+var notas = require('../modelo/notas')
 var newCategoria = new categorias();
 
 function registrarCategoria(req, res) {
@@ -10,27 +11,27 @@ function registrarCategoria(req, res) {
     if (newCategoria.id_user != null && newCategoria.titulo != null) {
         newCategoria.save()
             .then((categoriaSave) => {
-                res.status(200).send({ message: 'Categoría registrada exitosamente: ' + categoriaSave });
+                return res.status(200).send({ message: 'Categoría registrada exitosamente: ' + categoriaSave });
             }).catch(error => {
-                res.status(404).send({ message: 'Error al registrar la categoría' + error });
+                return res.status(404).send({ message: 'Error al registrar la categoría' + error });
             })
     } else {
-        res.status(200).send({ mesagge: 'Introduce todos los campos' });
+        return res.status(200).send({ mesagge: 'Introduce todos los campos' });
     }
 }
 
 function obtenerCategorias(req, res) {
     var params = req.body
-    var idUser = params.id_user;
+    var idUser = params.user_id;
     categorias.find({ id_user: idUser })
         .then(response => {
             if (!response) {
                 return res.status(404).send({ message: 'Ha ocurrido un error' });
             }
-            res.send(response);
+            return res.send(response);
         })
         .catch(error => {
-            res.status(500).send({ message: 'Error al encontrar las categorías' + error });
+            return res.status(500).send({ message: 'Error al encontrar las categorías' + error });
         })
 
 }
@@ -54,7 +55,7 @@ function actualizarCategoria(req, res) {
 
 function eliminarCategoria(req, res) {
     var categoriaID = req.params.id;
-
+    eliminarNotasCategoria(categoriaID)
     categorias.findByIdAndRemove(categoriaID)
         .then((categoria) => {
             if (!categoria) {
@@ -65,6 +66,20 @@ function eliminarCategoria(req, res) {
         })
         .catch((error) => {
             res.status(500).send({ message: 'Error al eliminar la categoría' + error });
+        });
+}
+
+function eliminarNotasCategoria(id) {
+    notas.deleteMany({ categoria: id })
+        .then((result) => {
+            if (result.deletedCount === 0) {
+                return { message: 'No se encontraron registros con la categoría especificada' };
+            }
+
+            return { message: 'Registros eliminados exitosamente' };
+        })
+        .catch((error) => {
+            return { message: 'Error al eliminar los registros' + error };
         });
 }
 

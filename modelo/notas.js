@@ -8,7 +8,7 @@ var esquemaNota = Schema({
     titulo: String,
     descripcion: String,
     fecha: Date,
-    categoria: { type: Schema.ObjectId, ref: "Categoria"}
+    categoria: String
 });
 
 module.exports = mongoose.model('Notas', esquemaNota);
